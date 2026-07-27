@@ -61,7 +61,7 @@ Or:
 /usr/bin/python3 -c "
 import plistlib, subprocess, os
 d = plistlib.loads(subprocess.run(['defaults','export','com.apple.Terminal','-'],capture_output=True).stdout)
-p = os.path.expanduser('~/Code/dotfiles-template/terminal/Basic.terminal')
+p = os.path.expanduser('~/Code/dotfiles/terminal/Basic.terminal')
 open(p,'wb').write(plistlib.dumps(d['Window Settings']['Basic']))
 "
 ```

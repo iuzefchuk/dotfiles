@@ -4,7 +4,7 @@ return {
     picker = {
       sources = {
         explorer = {
-          hidden = true, -- show dotfiles (gitignored files stay hidden)
+          hidden = true,
         },
       },
     },

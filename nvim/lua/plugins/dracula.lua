@@ -14,14 +14,4 @@ return {
       end,
     },
   },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "dracula",
-    },
-  },
-
-  -- themes bundled with LazyVim that we don't use
-  { "folke/tokyonight.nvim", enabled = false },
-  { "catppuccin/nvim", enabled = false },
 }

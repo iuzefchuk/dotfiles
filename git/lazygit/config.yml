@@ -1,0 +1,9 @@
+os:
+  # snacks.nvim sets `editPreset: nvim-remote`, whose built-in templates use
+  # `nvim --remote-tab`, so every file opened with `e` lands in a new nvim
+  # tabpage. These are the same templates with `--remote-tab` -> `--remote`,
+  # which reuses the current window instead. An explicit `edit` overrides the
+  # preset. The `--remote-send "q"` first closes the lazygit float.
+  edit: '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}})'
+  editAtLine: '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")'
+  openDirInEditor: '[ -z "$NVIM" ] && (nvim -- {{dir}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{dir}})'

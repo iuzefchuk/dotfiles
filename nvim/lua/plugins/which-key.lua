@@ -5,7 +5,6 @@ local spec = {
   { "<leader>c", hidden = true },
   { "<leader>f", hidden = true },
   { "<leader>u", hidden = true },
-  { "<leader>w", hidden = true },
   { "<leader>x", hidden = true },
   { "<leader>gh", hidden = true },
   { "<leader>b", group = "buffer" },

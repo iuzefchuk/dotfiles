@@ -112,9 +112,14 @@ local function rebind_explorer()
   end, { desc = leaders.e.desc })
 end
 
+local function rebind_write()
+  vim.keymap.set("n", "<leader>w", "<cmd>update<cr>", { desc = leaders.w.desc })
+end
+
 prune()
 collapse_to_leaves()
 rebind_explorer()
+rebind_write()
 
 vim.api.nvim_create_autocmd("User", {
   pattern = { "VeryLazy", "LazyLoad" },
@@ -122,6 +127,7 @@ vim.api.nvim_create_autocmd("User", {
     prune()
     collapse_to_leaves()
     rebind_explorer()
+    rebind_write()
   end,
 })
 

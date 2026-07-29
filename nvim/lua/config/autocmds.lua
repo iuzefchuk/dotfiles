@@ -39,9 +39,10 @@ end
 
 vim.api.nvim_create_autocmd("WinScrolled", {
   callback = function()
-    for _, win in ipairs(vim.api.nvim_list_wins()) do
-      local buf = vim.api.nvim_win_get_buf(win)
-      if vim.bo[buf].filetype == "snacks_dashboard" then
+    for id in pairs(vim.v.event) do
+      local win = tonumber(id)
+      local buf = win and vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win)
+      if buf and vim.bo[buf].filetype == "snacks_dashboard" then
         local max_top = math.max(1, vim.api.nvim_buf_line_count(buf) - vim.api.nvim_win_get_height(win) + 1)
         vim.api.nvim_win_call(win, function()
           local view = vim.fn.winsaveview()

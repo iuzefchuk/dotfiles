@@ -1,3 +1,5 @@
+local leaders = require("config.leaders")
+
 local prefixes = {
   " ",
   ",",
@@ -9,7 +11,6 @@ local prefixes = {
   "`",
   "|",
   "<Tab>",
-  "<tab>",
   "E",
   "K",
   "L",
@@ -25,12 +26,13 @@ local prefixes = {
   "x",
 }
 
-local keep = {
-  [" d"] = true,
-  [" s"] = true,
-  [" sg"] = true,
-  [" sr"] = true,
-}
+local keep = {}
+for key, leader in pairs(leaders) do
+  keep[" " .. key] = true
+  if leader.from then
+    keep[leader.from] = true
+  end
+end
 
 local modes = { "n", "v", "x", "s", "o", "i", "t" }
 
@@ -58,41 +60,48 @@ local function prune(buf)
   end
 end
 
-local leaves = {
-  { key = "g", from = " gg", desc = "git" },
-  { key = "q", from = " qq", desc = "quit" },
-  { key = "s", from = " sg", desc = "search" },
-  { key = "r", from = " sr", desc = "replace" },
-}
-
 local actions = {}
 
+local function capture(map)
+  local opts = {
+    silent = map.silent == 1,
+    nowait = map.nowait == 1,
+    expr = map.expr == 1,
+    remap = map.noremap == 0,
+  }
+  if opts.expr then
+    opts.replace_keycodes = map.replace_keycodes == 1
+  end
+  return { rhs = map.callback or map.rhs, opts = opts }
+end
+
 local function collapse_to_leaves()
-  for _, leaf in ipairs(leaves) do
-    for _, mode in ipairs(modes) do
-      for _, map in ipairs(vim.api.nvim_get_keymap(mode)) do
-        if map.lhs == leaf.from then
-          actions[leaf.key] = actions[leaf.key] or {}
-          actions[leaf.key][map.mode] = actions[leaf.key][map.mode] or map.callback or map.rhs
+  for _, mode in ipairs(modes) do
+    local maps = vim.api.nvim_get_keymap(mode)
+
+    for _, map in ipairs(maps) do
+      for key, leader in pairs(leaders) do
+        if leader.from == map.lhs then
+          actions[key] = actions[key] or {}
+          actions[key][map.mode] = actions[key][map.mode] or capture(map)
         end
       end
     end
-  end
 
-  for _, mode in ipairs(modes) do
-    for _, map in ipairs(vim.api.nvim_get_keymap(mode)) do
+    for _, map in ipairs(maps) do
       local lhs = map.lhs
-      for _, leaf in ipairs(leaves) do
-        if lhs:sub(1, 2) == " " .. leaf.key and #lhs > 2 then
+      for key, leader in pairs(leaders) do
+        if leader.from and lhs:sub(1, 2) == " " .. key and #lhs > 2 then
           pcall(vim.keymap.del, mode, lhs)
         end
       end
     end
   end
 
-  for _, leaf in ipairs(leaves) do
-    for mode, action in pairs(actions[leaf.key] or {}) do
-      vim.keymap.set(mode, "<leader>" .. leaf.key, action, { desc = leaf.desc })
+  for key, leader in pairs(leaders) do
+    for mode, action in pairs(actions[key] or {}) do
+      local opts = vim.tbl_extend("force", action.opts, { desc = leader.desc })
+      vim.keymap.set(mode, "<leader>" .. key, action.rhs, opts)
     end
   end
 end
@@ -100,7 +109,7 @@ end
 local function rebind_explorer()
   vim.keymap.set("n", "<leader>e", function()
     Snacks.explorer({ cwd = LazyVim.root() })
-  end, { desc = "explorer" })
+  end, { desc = leaders.e.desc })
 end
 
 prune()

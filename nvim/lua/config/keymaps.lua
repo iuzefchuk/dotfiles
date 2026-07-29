@@ -90,8 +90,8 @@ local function collapse_to_leaves()
 
     for _, map in ipairs(maps) do
       local lhs = map.lhs
-      for key, leader in pairs(leaders) do
-        if leader.from and lhs:sub(1, 2) == " " .. key and #lhs > 2 then
+      for key in pairs(leaders) do
+        if lhs:sub(1, 2) == " " .. key and #lhs > 2 then
           pcall(vim.keymap.del, mode, lhs)
         end
       end
@@ -112,6 +112,12 @@ local function rebind_explorer()
   end, { desc = leaders.e.desc })
 end
 
+local function rebind_search()
+  vim.keymap.set("n", "<leader>s", function()
+    Snacks.picker.grep({ cwd = LazyVim.root() })
+  end, { desc = leaders.s.desc })
+end
+
 local function rebind_write()
   vim.keymap.set("n", "<leader>w", "<cmd>update<cr>", { desc = leaders.w.desc })
 end
@@ -119,6 +125,7 @@ end
 prune()
 collapse_to_leaves()
 rebind_explorer()
+rebind_search()
 rebind_write()
 
 vim.api.nvim_create_autocmd("User", {
@@ -127,6 +134,7 @@ vim.api.nvim_create_autocmd("User", {
     prune()
     collapse_to_leaves()
     rebind_explorer()
+    rebind_search()
     rebind_write()
   end,
 })

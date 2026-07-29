@@ -4,6 +4,6 @@ return {
   g = { desc = "git", from = " gg" },
   q = { desc = "quit", from = " qq" },
   r = { desc = "replace", from = " sr", icon = { icon = "󰛔", color = "blue" } },
-  s = { desc = "search", from = " sg", icon = { icon = "󰍉", color = "green" } },
+  s = { desc = "search", icon = { icon = "󰍉", color = "green" } },
   w = { desc = "write", icon = { icon = "󰆓", color = "azure" } },
 }

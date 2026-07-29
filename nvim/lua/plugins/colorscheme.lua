@@ -1,4 +1,4 @@
-local schemes = { dark = "dracula", light = "github_light" }
+local schemes = { dark = "dracula", light = "alucard" }
 
 local function apply(appearance)
   local scheme = schemes[appearance]
@@ -16,14 +16,6 @@ local function current_appearance()
 end
 
 return {
-  {
-    "projekt0n/github-nvim-theme",
-    main = "github-theme",
-    lazy = false,
-    priority = 1000,
-    opts = {},
-  },
-
   {
     "f-person/auto-dark-mode.nvim",
     event = "VeryLazy",

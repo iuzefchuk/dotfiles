@@ -38,6 +38,29 @@ end
 
 return {
   {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    lazy = false,
+    priority = 1100,
+    opts = {
+      integrations = {
+        blink_cmp = false,
+        grug_far = true,
+        lsp_trouble = false,
+        mason = true,
+        mini = true,
+        snacks = true,
+        treesitter = true,
+        which_key = false,
+      },
+    },
+    config = function(_, opts)
+      require("catppuccin").setup(opts)
+      apply(current_appearance())
+    end,
+  },
+
+  {
     "f-person/auto-dark-mode.nvim",
     event = "VeryLazy",
     opts = {
@@ -48,15 +71,6 @@ return {
       end,
       set_light_mode = function()
         apply("light")
-      end,
-    },
-  },
-
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = function()
-        apply(current_appearance())
       end,
     },
   },

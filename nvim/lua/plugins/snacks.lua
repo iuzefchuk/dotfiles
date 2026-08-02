@@ -1,10 +1,4 @@
-return {
-  "folke/snacks.nvim",
-  opts = function(_, opts)
-    opts.dashboard = opts.dashboard or {}
-    opts.dashboard.width = 48
-    opts.dashboard.preset = opts.dashboard.preset or {}
-    opts.dashboard.preset.header = [==[
+local dashboard_header = [==[
           /                            )        
           (                             |\      
          /|                              \\     
@@ -43,8 +37,55 @@ return {
                  snd          \  \  /           
                                '.__)            
 ]==]
-    opts.dashboard.sections = {
-      { section = "header" },
-    }
+
+local function plain_directories()
+  vim.api.nvim_set_hl(0, "SnacksPickerDirectory", {})
+end
+
+return {
+  "folke/snacks.nvim",
+  priority = 1000,
+  lazy = false,
+  init = function()
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      callback = function()
+        vim.schedule(plain_directories)
+      end,
+    })
+    vim.schedule(plain_directories)
   end,
+  opts = {
+    bigfile = { enabled = true },
+    quickfile = { enabled = true },
+    indent = { enabled = true },
+    input = { enabled = true },
+    notifier = { enabled = true },
+    scope = { enabled = true },
+    scroll = { enabled = true },
+    statuscolumn = { enabled = true },
+    words = { enabled = true },
+    bufdelete = { enabled = true },
+    explorer = { enabled = true },
+    lazygit = { enabled = true },
+    terminal = { enabled = true },
+    dashboard = {
+      enabled = true,
+      width = 48,
+      preset = { header = dashboard_header },
+      sections = {
+        { section = "header" },
+      },
+    },
+    picker = {
+      enabled = true,
+      sources = {
+        explorer = {
+          hidden = true,
+          layout = {
+            hidden = { "input" },
+          },
+        },
+      },
+    },
+  },
 }

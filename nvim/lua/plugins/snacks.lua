@@ -48,6 +48,7 @@ return {
   lazy = false,
   init = function()
     vim.api.nvim_create_autocmd("ColorScheme", {
+      group = vim.api.nvim_create_augroup("config_plain_directories", { clear = true }),
       callback = function()
         vim.schedule(plain_directories)
       end,

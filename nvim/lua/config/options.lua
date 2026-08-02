@@ -6,6 +6,7 @@ vim.g.markdown_recommended_style = 0
 local opt = vim.opt
 
 opt.autowrite = true
+opt.breakindent = true
 opt.clipboard = vim.env.SSH_CONNECTION and "" or "unnamedplus"
 opt.conceallevel = 2
 opt.confirm = true
@@ -30,11 +31,13 @@ opt.ignorecase = true
 opt.inccommand = "nosplit"
 opt.jumpoptions = "view"
 opt.laststatus = 3
+opt.linebreak = true
 opt.list = true
 opt.mouse = "a"
 opt.number = true
 opt.pumblend = 10
 opt.pumheight = 10
+opt.relativenumber = false
 opt.ruler = false
 opt.scrolloff = 4
 opt.shiftround = true
@@ -59,9 +62,4 @@ opt.updatetime = 200
 opt.virtualedit = "block"
 opt.wildmode = "longest:full,full"
 opt.winminwidth = 5
-
-opt.relativenumber = false
-
 opt.wrap = true
-opt.linebreak = true
-opt.breakindent = true

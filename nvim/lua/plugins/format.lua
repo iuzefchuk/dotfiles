@@ -26,16 +26,15 @@ local function formatters_by_ft()
   return ft
 end
 
--- prettier errors out on files it has no parser for; skip those instead.
+local has_parser = {}
 local function prettier_has_parser(_, ctx)
-  if vim.tbl_contains(prettier_filetypes, vim.bo[ctx.buf].filetype) then
-    return true
+  if has_parser[ctx.filename] == nil then
+    local out = vim.fn.system({ "prettier", "--file-info", ctx.filename })
+    local ok, info = pcall(vim.json.decode, out)
+    local parser = ok and type(info) == "table" and info.inferredParser or nil
+    has_parser[ctx.filename] = parser ~= nil and parser ~= vim.NIL
   end
-  local out = vim.fn.system({ "prettier", "--file-info", ctx.filename })
-  local ok, parser = pcall(function()
-    return vim.fn.json_decode(out).inferredParser
-  end)
-  return ok and parser ~= nil and parser ~= vim.NIL
+  return has_parser[ctx.filename]
 end
 
 return {

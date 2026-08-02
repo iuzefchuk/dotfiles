@@ -8,13 +8,15 @@ local function open_explorer()
   end)
 end
 
-if vim.v.vim_did_enter == 1 then
-  open_explorer()
-else
-  vim.api.nvim_create_autocmd("VimEnter", {
-    once = true,
-    callback = open_explorer,
-  })
+if vim.fn.argc(-1) == 0 then
+  if vim.v.vim_did_enter == 1 then
+    open_explorer()
+  else
+    vim.api.nvim_create_autocmd("VimEnter", {
+      once = true,
+      callback = open_explorer,
+    })
+  end
 end
 
 local function no_real_buffers_left()
@@ -84,27 +86,32 @@ vim.api.nvim_create_autocmd("SwapExists", {
     if not fh then
       return
     end
-    local header = fh:read(108) or ""
+    local header = fh:read(1008) or ""
     fh:close()
-    if #header < 108 then
+    if #header < 1008 then
       return
     end
 
     local p = { header:byte(25, 28) }
     local pid = p[1] + p[2] * 256 + p[3] * 65536 + p[4] * 16777216
     local host = (header:sub(69, 108):gsub("%z.*$", ""))
+    local dirty = header:byte(1008) ~= 0
 
     local this_host = vim.uv.os_gethostname()
-    local same_host = host == "" or host == this_host or vim.startswith(host, this_host)
-    local alive = pid > 0 and vim.uv.kill(pid, 0) == 0
+    local same_host = host == "" or vim.startswith(host, this_host) or vim.startswith(this_host, host)
 
-    if same_host and not alive then
+    local alive = false
+    if pid > 0 then
+      local ok, _, err = vim.uv.kill(pid, 0)
+      alive = ok == 0 or err == "EPERM"
+    end
+
+    if same_host and not alive and not dirty then
       vim.v.swapchoice = "d"
     end
   end,
 })
 
--- reload the file when it changed elsewhere
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
   callback = function()
@@ -130,7 +137,6 @@ vim.api.nvim_create_autocmd("VimResized", {
   end,
 })
 
--- restore cursor position
 vim.api.nvim_create_autocmd("BufReadPost", {
   group = augroup("last_loc"),
   callback = function(event)
@@ -146,7 +152,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
--- close throwaway windows with q (grug-far, help, quickfix, ...)
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("close_with_q"),
   pattern = {
@@ -185,7 +190,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- create missing parent directories on save
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = augroup("auto_create_dir"),
   callback = function(event)

@@ -18,7 +18,6 @@ return {
   },
 
   {
-    -- loaded on demand by :GrugFar in config/commands.lua
     "MagicDuck/grug-far.nvim",
     lazy = true,
     opts = { headerMaxWidth = 80 },

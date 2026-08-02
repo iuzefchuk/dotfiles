@@ -45,7 +45,6 @@ return {
       TS.install(missing, { summary = true })
     end
 
-    -- start on a parser we actually have; retries naturally as installs land
     vim.api.nvim_create_autocmd("FileType", {
       group = vim.api.nvim_create_augroup("config_treesitter", { clear = true }),
       callback = function(event)

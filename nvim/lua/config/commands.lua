@@ -1,4 +1,3 @@
--- Project root: prefer an attached LSP's workspace, else walk up for a marker.
 local function root()
   local buf = vim.api.nvim_get_current_buf()
 
@@ -57,7 +56,6 @@ local commands = {
   },
 }
 
--- the typed `:Cmd` lingers on the cmdline until something forces a redraw of it
 local function clear_cmdline()
   vim.api.nvim_echo({}, false, {})
 end

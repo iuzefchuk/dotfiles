@@ -4,16 +4,11 @@ local function pkg(name, path)
   return vim.fs.normalize(mason_root .. "/packages/" .. name .. path)
 end
 
--- vue_ls runs in hybrid mode: it owns the template/style blocks and forwards
--- everything TypeScript to vtsls, which needs the Vue plugin loaded to answer.
--- Vue Language Tools v3 ships the plugin as its own package, so point there.
 local vue_plugin = {
   name = "@vue/typescript-plugin",
   location = pkg("vue-language-server", "/node_modules/@vue/typescript-plugin"),
   languages = { "vue" },
   configNamespace = "typescript",
-  -- without this the plugin is ignored whenever the project supplies its own
-  -- TypeScript, which autoUseWorkspaceTsdk makes the common case
   enableForWorkspaceTypeScriptVersions = true,
 }
 
@@ -96,7 +91,6 @@ local function setup()
       "typescriptreact",
       "typescript.tsx",
       "vue",
-      "svelte",
     },
     settings = {
       complete_function_calls = true,
@@ -123,8 +117,6 @@ local function setup()
     },
   })
 
-  -- eslint --fix on save, ahead of prettier. `LspEslintFixAll` is created by
-  -- lspconfig's own on_attach, so chain onto it rather than replacing it.
   local eslint_on_attach = vim.lsp.config.eslint and vim.lsp.config.eslint.on_attach
 
   vim.lsp.config("eslint", {
@@ -146,8 +138,10 @@ local function setup()
 
   vim.lsp.enable({ "vtsls", "vue_ls", "svelte", "eslint", "jsonls", "lua_ls" })
 
-  -- inlay hints are noisy in .vue SFCs, where vtsls answers through the plugin
+  local group = vim.api.nvim_create_augroup("config_lsp", { clear = true })
+
   vim.api.nvim_create_autocmd("LspAttach", {
+    group = group,
     callback = function(event)
       if vim.bo[event.buf].filetype ~= "vue" then
         vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
@@ -155,7 +149,7 @@ local function setup()
     end,
   })
 
-  vim.api.nvim_create_autocmd("LspDetach", { callback = reset_stranded_diagnostics })
+  vim.api.nvim_create_autocmd("LspDetach", { group = group, callback = reset_stranded_diagnostics })
 
   vim.api.nvim_create_user_command("EslintRestart", restart_eslint, {
     desc = "Restart eslint to drop stale type-aware diagnostics",
@@ -168,12 +162,15 @@ return {
     cmd = "Mason",
     opts = {
       ensure_installed = {
+        "codelldb",
         "eslint-lsp",
         "json-lsp",
         "lua-language-server",
         "prettier",
+        "shfmt",
         "stylua",
         "svelte-language-server",
+        "tree-sitter-cli",
         "vtsls",
         "vue-language-server",
       },
@@ -220,6 +217,5 @@ return {
     "mrcjkb/rustaceanvim",
     version = "^7",
     lazy = false,
-    ft = { "rust" },
   },
 }

@@ -16,6 +16,7 @@ local function drop_stale_terminals()
 end
 
 vim.api.nvim_create_autocmd("ColorScheme", {
+  group = vim.api.nvim_create_augroup("config_stale_terminals", { clear = true }),
   callback = function()
     vim.schedule(drop_stale_terminals)
   end,

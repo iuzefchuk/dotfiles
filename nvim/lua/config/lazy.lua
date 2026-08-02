@@ -23,7 +23,7 @@ require("lazy").setup({
     lazy = false,
     version = false,
   },
-  install = { colorscheme = { "dracula" } },
+  install = { colorscheme = { "catppuccin" } },
   checker = {
     enabled = true,
     notify = false,
@@ -32,6 +32,7 @@ require("lazy").setup({
     rtp = {
       disabled_plugins = {
         "gzip",
+        "netrwPlugin",
         "tarPlugin",
         "tohtml",
         "tutor",

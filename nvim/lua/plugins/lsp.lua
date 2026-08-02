@@ -38,14 +38,4 @@ return {
       desc = "Restart eslint to drop stale type-aware diagnostics",
     })
   end,
-  opts = {
-    servers = {
-      ["*"] = {
-        keys = {
-          { "<leader>ss", false },
-          { "<leader>sS", false },
-        },
-      },
-    },
-  },
 }

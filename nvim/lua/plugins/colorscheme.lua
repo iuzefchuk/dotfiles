@@ -1,4 +1,4 @@
-local schemes = { dark = "dracula", light = "alucard" }
+local schemes = { dark = "catppuccin-mocha", light = "catppuccin-latte" }
 
 local themed_terminals = { lazygit = true, lazydocker = true }
 

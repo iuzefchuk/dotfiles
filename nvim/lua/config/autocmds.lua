@@ -81,32 +81,13 @@ vim.api.nvim_create_autocmd("BufDelete", {
 vim.api.nvim_create_autocmd("SwapExists", {
   group = augroup("swap"),
   callback = function()
-    local swap = vim.v.swapname
-    local fh = io.open(swap, "rb")
-    if not fh then
-      return
-    end
-    local header = fh:read(1008) or ""
-    fh:close()
-    if #header < 1008 then
+    local info = vim.fn.swapinfo(vim.v.swapname)
+    if type(info) ~= "table" or info.error or info.pid ~= 0 or info.dirty ~= 0 then
       return
     end
 
-    local p = { header:byte(25, 28) }
-    local pid = p[1] + p[2] * 256 + p[3] * 65536 + p[4] * 16777216
-    local host = (header:sub(69, 108):gsub("%z.*$", ""))
-    local dirty = header:byte(1008) ~= 0
-
-    local this_host = vim.uv.os_gethostname()
-    local same_host = host == "" or vim.startswith(host, this_host) or vim.startswith(this_host, host)
-
-    local alive = false
-    if pid > 0 then
-      local ok, _, err = vim.uv.kill(pid, 0)
-      alive = ok == 0 or err == "EPERM"
-    end
-
-    if same_host and not alive and not dirty then
+    local host, this_host = info.host or "", vim.uv.os_gethostname()
+    if host == "" or vim.startswith(host, this_host) or vim.startswith(this_host, host) then
       vim.v.swapchoice = "d"
     end
   end,

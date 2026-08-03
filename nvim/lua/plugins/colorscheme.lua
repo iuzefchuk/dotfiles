@@ -29,14 +29,6 @@ local function apply(appearance)
   end
 end
 
-local function current_appearance()
-  if vim.fn.has("mac") == 0 then
-    return "dark"
-  end
-  local out = vim.fn.system({ "defaults", "read", "-g", "AppleInterfaceStyle" })
-  return vim.trim(out) == "Dark" and "dark" or "light"
-end
-
 return {
   {
     "catppuccin/nvim",
@@ -57,13 +49,13 @@ return {
     },
     config = function(_, opts)
       require("catppuccin").setup(opts)
-      apply(current_appearance())
+      apply("dark")
     end,
   },
 
   {
     "f-person/auto-dark-mode.nvim",
-    event = "VeryLazy",
+    lazy = false,
     opts = {
       update_interval = 3000,
       fallback = "dark",

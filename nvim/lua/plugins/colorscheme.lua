@@ -38,7 +38,6 @@ return {
     opts = {
       integrations = {
         blink_cmp = false,
-        grug_far = true,
         lsp_trouble = false,
         mason = true,
         mini = true,
@@ -57,7 +56,7 @@ return {
     "f-person/auto-dark-mode.nvim",
     lazy = false,
     opts = {
-      update_interval = 3000,
+      update_interval = 15000,
       fallback = "dark",
       set_dark_mode = function()
         apply("dark")

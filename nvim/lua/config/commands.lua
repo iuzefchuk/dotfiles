@@ -14,8 +14,8 @@ local function root()
 end
 
 local commands = {
-  Close = {
-    desc = "close",
+  Clear = {
+    desc = "clear",
     run = function()
       Snacks.bufdelete.all()
     end,
@@ -42,16 +42,6 @@ local commands = {
     desc = "search",
     run = function()
       Snacks.picker.grep({ cwd = root() })
-    end,
-  },
-  GrugFar = {
-    desc = "replace",
-    run = function()
-      local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
-      require("grug-far").open({
-        transient = true,
-        prefills = { filesFilter = ext and ext ~= "" and "*." .. ext or nil },
-      })
     end,
   },
 }

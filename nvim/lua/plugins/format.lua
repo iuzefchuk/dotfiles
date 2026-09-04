@@ -11,7 +11,6 @@ local prettier_filetypes = {
   "markdown",
   "markdown.mdx",
   "scss",
-  "svelte",
   "typescript",
   "typescriptreact",
   "vue",
@@ -27,14 +26,30 @@ local function formatters_by_ft()
 end
 
 local has_parser = {}
-local function prettier_has_parser(_, ctx)
-  if has_parser[ctx.filename] == nil then
-    local out = vim.fn.system({ "prettier", "--file-info", ctx.filename })
+local function prettier_has_parser(self, ctx)
+  local cmd = self.command
+  if type(cmd) == "function" then
+    cmd = cmd(self, ctx)
+  end
+
+  local name = vim.fn.fnamemodify(ctx.filename, ":t")
+  local key = cmd .. "\0" .. (name:match("^.+%.([^.]+)$") or name)
+  if has_parser[key] == nil then
+    local out = vim.fn.system({ cmd, "--file-info", ctx.filename })
     local ok, info = pcall(vim.json.decode, out)
     local parser = ok and type(info) == "table" and info.inferredParser or nil
-    has_parser[ctx.filename] = parser ~= nil and parser ~= vim.NIL
+    has_parser[key] = parser ~= nil and parser ~= vim.NIL
   end
-  return has_parser[ctx.filename]
+  return has_parser[key]
+end
+
+local function eslint_fix_then_format(buf)
+  if #vim.lsp.get_clients({ bufnr = buf, name = "eslint" }) > 0 then
+    vim.api.nvim_buf_call(buf, function()
+      pcall(vim.cmd, "LspEslintFixAll")
+    end)
+  end
+  return { timeout_ms = 3000 }
 end
 
 return {
@@ -43,7 +58,7 @@ return {
   cmd = "ConformInfo",
   opts = {
     default_format_opts = { lsp_format = "fallback" },
-    format_on_save = { timeout_ms = 3000 },
+    format_on_save = eslint_fix_then_format,
     formatters_by_ft = formatters_by_ft(),
     formatters = {
       prettier = { condition = prettier_has_parser },

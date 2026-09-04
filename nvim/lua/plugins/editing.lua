@@ -16,10 +16,4 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     opts = {},
   },
-
-  {
-    "MagicDuck/grug-far.nvim",
-    lazy = true,
-    opts = { headerMaxWidth = 80 },
-  },
 }

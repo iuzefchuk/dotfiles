@@ -12,12 +12,6 @@ local vue_plugin = {
   enableForWorkspaceTypeScriptVersions = true,
 }
 
-local svelte_plugin = {
-  name = "typescript-svelte-plugin",
-  location = pkg("svelte-language-server", "/node_modules/typescript-svelte-plugin"),
-  enableForWorkspaceTypeScriptVersions = true,
-}
-
 local ts_settings = {
   updateImportsOnFileMove = { enabled = "always" },
   inlayHints = {
@@ -37,29 +31,6 @@ local function reset_stranded_diagnostics(event)
       vim.diagnostic.reset(ns, event.buf)
     end
   end
-end
-
-local function restart_eslint()
-  local clients = vim.lsp.get_clients({ name = "eslint" })
-  if #clients == 0 then
-    vim.notify("eslint is not attached", vim.log.levels.WARN)
-    return
-  end
-  for _, client in ipairs(clients) do
-    client:stop(true)
-  end
-  local timer = assert(vim.uv.new_timer())
-  local waited = 0
-  local function enable_once_exited()
-    waited = waited + 50
-    if #vim.lsp.get_clients({ name = "eslint" }) > 0 and waited < 5000 then
-      return
-    end
-    timer:stop()
-    timer:close()
-    vim.lsp.enable("eslint")
-  end
-  timer:start(50, 50, vim.schedule_wrap(enable_once_exited))
 end
 
 local function setup()
@@ -97,7 +68,7 @@ local function setup()
       vtsls = {
         autoUseWorkspaceTsdk = true,
         experimental = { maxInlayHintLength = 30 },
-        tsserver = { globalPlugins = { vue_plugin, svelte_plugin } },
+        tsserver = { globalPlugins = { vue_plugin } },
       },
       typescript = ts_settings,
       javascript = ts_settings,
@@ -117,26 +88,14 @@ local function setup()
     },
   })
 
-  local eslint_on_attach = vim.lsp.config.eslint and vim.lsp.config.eslint.on_attach
-
   vim.lsp.config("eslint", {
     settings = {
       workingDirectories = { mode = "auto" },
-      format = true,
+      format = false,
     },
-    on_attach = function(client, buf)
-      if eslint_on_attach then
-        eslint_on_attach(client, buf)
-      end
-      vim.api.nvim_create_autocmd("BufWritePre", {
-        group = vim.api.nvim_create_augroup("eslint_fix_" .. buf, { clear = true }),
-        buffer = buf,
-        command = "LspEslintFixAll",
-      })
-    end,
   })
 
-  vim.lsp.enable({ "vtsls", "vue_ls", "svelte", "eslint", "jsonls", "lua_ls" })
+  vim.lsp.enable({ "vtsls", "vue_ls", "eslint", "jsonls", "lua_ls" })
 
   local group = vim.api.nvim_create_augroup("config_lsp", { clear = true })
 
@@ -146,14 +105,15 @@ local function setup()
       if vim.bo[event.buf].filetype ~= "vue" then
         vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
       end
+
+      local client = vim.lsp.get_client_by_id(event.data.client_id)
+      if client and client:supports_method("textDocument/completion") then
+        vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
+      end
     end,
   })
 
   vim.api.nvim_create_autocmd("LspDetach", { group = group, callback = reset_stranded_diagnostics })
-
-  vim.api.nvim_create_user_command("EslintRestart", restart_eslint, {
-    desc = "Restart eslint to drop stale type-aware diagnostics",
-  })
 end
 
 return {
@@ -162,27 +122,28 @@ return {
     cmd = "Mason",
     opts = {
       ensure_installed = {
-        "codelldb",
-        "eslint-lsp",
-        "json-lsp",
-        "lua-language-server",
-        "prettier",
-        "shfmt",
-        "stylua",
-        "svelte-language-server",
-        "tree-sitter-cli",
-        "vtsls",
-        "vue-language-server",
+        "codelldb@v1.12.2",
+        "eslint-lsp@4.10.0",
+        "json-lsp@4.10.0",
+        "lua-language-server@3.18.2",
+        "prettier@3.9.5",
+        "shfmt@v3.13.1",
+        "stylua@v2.5.2",
+        "tree-sitter-cli@v0.26.11",
+        "vtsls@0.3.0",
+        "vue-language-server@3.3.7",
       },
     },
     config = function(_, opts)
       require("mason").setup(opts)
+      local Package = require("mason-core.package")
       local registry = require("mason-registry")
       registry.refresh(function()
-        for _, name in ipairs(opts.ensure_installed) do
+        for _, spec in ipairs(opts.ensure_installed) do
+          local name, version = Package.Parse(spec)
           local ok, p = pcall(registry.get_package, name)
           if ok and not p:is_installed() then
-            p:install()
+            p:install({ version = version })
           end
         end
       end)
@@ -211,6 +172,11 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     dependencies = { "mason-org/mason.nvim", "b0o/SchemaStore.nvim" },
     config = setup,
+  },
+
+  {
+    "mfussenegger/nvim-dap",
+    lazy = true,
   },
 
   {

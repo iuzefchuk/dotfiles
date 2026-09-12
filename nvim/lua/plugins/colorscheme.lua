@@ -1,6 +1,6 @@
 local schemes = { dark = "catppuccin-mocha", light = "catppuccin-latte" }
 
-local themed_terminals = { lazygit = true, lazydocker = true }
+local themed_terminals = { lazygit = true }
 
 local function drop_stale_terminals()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do

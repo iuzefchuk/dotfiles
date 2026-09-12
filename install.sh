@@ -21,6 +21,5 @@ link() {
 
 link "$root/nvim" "$HOME/.config/nvim"
 link "$root/lazygit/config.yml" "$support/lazygit/config.yml"
-link "$root/lazydocker/config.yml" "$support/lazydocker/config.yml"
 
 echo "note terminal/Basic.terminal must be imported via Terminal > Settings > Profiles"

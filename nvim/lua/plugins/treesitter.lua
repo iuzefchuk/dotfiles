@@ -21,7 +21,6 @@ return {
       "markdown_inline",
       "query",
       "regex",
-      "rust",
       "scss",
       "toml",
       "tsx",

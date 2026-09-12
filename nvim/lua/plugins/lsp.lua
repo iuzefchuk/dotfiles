@@ -122,7 +122,6 @@ return {
     cmd = "Mason",
     opts = {
       ensure_installed = {
-        "codelldb@v1.12.2",
         "eslint-lsp@4.10.0",
         "json-lsp@4.10.0",
         "lua-language-server@3.18.2",
@@ -172,16 +171,5 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     dependencies = { "mason-org/mason.nvim", "b0o/SchemaStore.nvim" },
     config = setup,
-  },
-
-  {
-    "mfussenegger/nvim-dap",
-    lazy = true,
-  },
-
-  {
-    "mrcjkb/rustaceanvim",
-    version = "^7",
-    lazy = false,
   },
 }

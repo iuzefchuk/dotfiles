@@ -20,12 +20,6 @@ local commands = {
       Snacks.bufdelete.all()
     end,
   },
-  Docker = {
-    desc = "docker",
-    run = function()
-      Snacks.terminal("lazydocker")
-    end,
-  },
   Explore = {
     desc = "explorer",
     run = function()

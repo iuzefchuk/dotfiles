@@ -4,7 +4,6 @@ vim.pack.add({
   "https://github.com/folke/snacks.nvim",
   "https://github.com/nvim-mini/mini.icons",
   "https://github.com/nvim-mini/mini.pairs",
-  "https://github.com/windwp/nvim-ts-autotag",
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/b0o/SchemaStore.nvim",
   "https://github.com/folke/lazydev.nvim",

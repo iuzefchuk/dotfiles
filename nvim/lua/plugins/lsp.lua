@@ -86,6 +86,14 @@ vim.lsp.config("eslint", {
   },
 })
 
+vim.lsp.config("lua_ls", {
+  settings = {
+    Lua = {
+      diagnostics = { disable = { "missing-fields" } },
+    },
+  },
+})
+
 vim.lsp.enable({ "vtsls", "vue_ls", "eslint", "jsonls", "lua_ls" })
 
 local group = vim.api.nvim_create_augroup("config_lsp", { clear = true })

@@ -33,7 +33,7 @@ end
 local function eslint_fix_then_format(buf)
   if #vim.lsp.get_clients({ bufnr = buf, name = "eslint" }) > 0 then
     vim.api.nvim_buf_call(buf, function()
-      pcall(vim.cmd, "LspEslintFixAll")
+      pcall(vim.cmd.LspEslintFixAll)
     end)
   end
   return { timeout_ms = 3000 }

@@ -37,7 +37,8 @@ end
 local function main_win()
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     local ft = vim.bo[vim.api.nvim_win_get_buf(win)].filetype
-    if vim.api.nvim_win_get_config(win).relative == "" and not ft:match("^snacks_") then
+    local sidebar = ft ~= "snacks_dashboard" and ft:match("^snacks_")
+    if vim.api.nvim_win_get_config(win).relative == "" and not sidebar then
       return win
     end
   end
@@ -67,29 +68,24 @@ vim.api.nvim_create_autocmd("BufDelete", {
   group = augroup("dashboard_reopen"),
   callback = function()
     vim.schedule(function()
-      if vim.bo.filetype == "snacks_dashboard" or not no_real_buffers_left() then
+      if not no_real_buffers_left() then
         return
       end
       local win = main_win()
-      if win then
-        require("snacks").dashboard.open({ win = win })
+      if not win then
+        return
+      end
+      local buf = vim.api.nvim_win_get_buf(win)
+      if vim.bo[buf].filetype == "snacks_dashboard" then
+        for _, stray in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.bo[stray].buflisted then
+            pcall(vim.api.nvim_buf_delete, stray, { force = true })
+          end
+        end
+      else
+        require("snacks").dashboard.open({ win = win, buf = buf })
       end
     end)
-  end,
-})
-
-vim.api.nvim_create_autocmd("SwapExists", {
-  group = augroup("swap"),
-  callback = function()
-    local info = vim.fn.swapinfo(vim.v.swapname)
-    if type(info) ~= "table" or info.error or info.pid ~= 0 or info.dirty ~= 0 then
-      return
-    end
-
-    local host, this_host = info.host or "", vim.uv.os_gethostname()
-    if host == "" or vim.startswith(host, this_host) or vim.startswith(this_host, host) then
-      vim.v.swapchoice = "d"
-    end
   end,
 })
 
@@ -105,7 +101,7 @@ vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = augroup("highlight_yank"),
   callback = function()
-    (vim.hl or vim.highlight).on_yank()
+    vim.hl.on_yank()
   end,
 })
 
@@ -135,14 +131,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("close_with_q"),
-  pattern = {
-    "checkhealth",
-    "help",
-    "lspinfo",
-    "notify",
-    "qf",
-    "startuptime",
-  },
+  pattern = { "checkhealth", "help", "qf" },
   callback = function(event)
     vim.bo[event.buf].buflisted = false
     vim.schedule(function()

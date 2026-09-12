@@ -22,7 +22,8 @@ local function close_extra_windows()
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     local buf = vim.api.nvim_win_get_buf(win)
     local floating = vim.api.nvim_win_get_config(win).relative ~= ""
-    local sidebar = vim.bo[buf].filetype:match("^snacks_")
+    local ft = vim.bo[buf].filetype
+    local sidebar = ft ~= "snacks_dashboard" and ft:match("^snacks_")
     if not floating and not sidebar then
       if kept then
         pcall(vim.api.nvim_win_close, win, false)

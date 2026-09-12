@@ -1,46 +1,33 @@
-local prettier_filetypes = {
-  "css",
-  "graphql",
-  "handlebars",
-  "html",
-  "javascript",
-  "javascriptreact",
-  "json",
-  "jsonc",
-  "less",
-  "markdown",
-  "markdown.mdx",
-  "scss",
-  "typescript",
-  "typescriptreact",
-  "vue",
-  "yaml",
+local prettier_parsers = {
+  css = "css",
+  graphql = "graphql",
+  handlebars = "glimmer",
+  html = "html",
+  javascript = "babel",
+  javascriptreact = "babel",
+  json = "json",
+  jsonc = "jsonc",
+  less = "less",
+  markdown = "markdown",
+  ["markdown.mdx"] = "mdx",
+  scss = "scss",
+  typescript = "typescript",
+  typescriptreact = "typescript",
+  vue = "vue",
+  yaml = "yaml",
 }
 
 local function formatters_by_ft()
   local ft = { lua = { "stylua" }, sh = { "shfmt" } }
-  for _, name in ipairs(prettier_filetypes) do
+  for name in pairs(prettier_parsers) do
     ft[name] = { "prettier" }
   end
   return ft
 end
 
-local has_parser = {}
-local function prettier_has_parser(self, ctx)
-  local cmd = self.command
-  if type(cmd) == "function" then
-    cmd = cmd(self, ctx)
-  end
-
-  local name = vim.fn.fnamemodify(ctx.filename, ":t")
-  local key = cmd .. "\0" .. (name:match("^.+%.([^.]+)$") or name)
-  if has_parser[key] == nil then
-    local out = vim.fn.system({ cmd, "--file-info", ctx.filename })
-    local ok, info = pcall(vim.json.decode, out)
-    local parser = ok and type(info) == "table" and info.inferredParser or nil
-    has_parser[key] = parser ~= nil and parser ~= vim.NIL
-  end
-  return has_parser[key]
+local function prettier_parser(_, ctx)
+  local parser = prettier_parsers[vim.bo[ctx.buf].filetype]
+  return parser and { "--parser", parser } or {}
 end
 
 local function eslint_fix_then_format(buf)
@@ -61,7 +48,7 @@ return {
     format_on_save = eslint_fix_then_format,
     formatters_by_ft = formatters_by_ft(),
     formatters = {
-      prettier = { condition = prettier_has_parser },
+      prettier = { prepend_args = prettier_parser },
     },
   },
 }

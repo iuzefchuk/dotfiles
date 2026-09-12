@@ -1,17 +1,3 @@
-local mason_root = vim.env.MASON or (vim.fn.stdpath("data") .. "/mason")
-
-local function pkg(name, path)
-  return vim.fs.normalize(mason_root .. "/packages/" .. name .. path)
-end
-
-local vue_plugin = {
-  name = "@vue/typescript-plugin",
-  location = pkg("vue-language-server", "/node_modules/@vue/typescript-plugin"),
-  languages = { "vue" },
-  configNamespace = "typescript",
-  enableForWorkspaceTypeScriptVersions = true,
-}
-
 local ts_settings = {
   updateImportsOnFileMove = { enabled = "always" },
   inlayHints = {
@@ -34,6 +20,14 @@ local function reset_stranded_diagnostics(event)
 end
 
 local function setup()
+  local vue_plugin = {
+    name = "@vue/typescript-plugin",
+    location = vim.fs.joinpath(vim.env.MASON, "packages/vue-language-server/node_modules/@vue/typescript-plugin"),
+    languages = { "vue" },
+    configNamespace = "typescript",
+    enableForWorkspaceTypeScriptVersions = true,
+  }
+
   vim.diagnostic.config({
     underline = true,
     update_in_insert = false,
@@ -45,10 +39,10 @@ local function setup()
     },
     signs = {
       text = {
-        [vim.diagnostic.severity.ERROR] = " ",
-        [vim.diagnostic.severity.WARN] = " ",
-        [vim.diagnostic.severity.HINT] = " ",
-        [vim.diagnostic.severity.INFO] = " ",
+        [vim.diagnostic.severity.ERROR] = " ",
+        [vim.diagnostic.severity.WARN] = " ",
+        [vim.diagnostic.severity.HINT] = " ",
+        [vim.diagnostic.severity.INFO] = " ",
       },
     },
   })
@@ -76,12 +70,9 @@ local function setup()
   })
 
   vim.lsp.config("jsonls", {
-    before_init = function(_, config)
-      config.settings.json.schemas = config.settings.json.schemas or {}
-      vim.list_extend(config.settings.json.schemas, require("schemastore").json.schemas())
-    end,
     settings = {
       json = {
+        schemas = require("schemastore").json.schemas(),
         format = { enable = true },
         validate = { enable = true },
       },
@@ -95,7 +86,7 @@ local function setup()
     },
   })
 
-  vim.lsp.enable({ "vtsls", "vue_ls", "eslint", "jsonls", "lua_ls" })
+  require("mason-lspconfig").setup({ automatic_enable = { exclude = { "stylua" } } })
 
   local group = vim.api.nvim_create_augroup("config_lsp", { clear = true })
 
@@ -120,33 +111,31 @@ return {
   {
     "mason-org/mason.nvim",
     cmd = "Mason",
+    opts = {},
+  },
+
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = { "mason-org/mason.nvim" },
     opts = {
       ensure_installed = {
-        "eslint-lsp@4.10.0",
-        "json-lsp@4.10.0",
-        "lua-language-server@3.18.2",
-        "prettier@3.9.5",
-        "shfmt@v3.13.1",
-        "stylua@v2.5.2",
-        "tree-sitter-cli@v0.26.11",
-        "vtsls@0.3.0",
-        "vue-language-server@3.3.7",
+        { "eslint-lsp", version = "4.10.0" },
+        { "json-lsp", version = "4.10.0" },
+        { "lua-language-server", version = "3.19.1" },
+        { "prettier", version = "3.9.6" },
+        { "shfmt", version = "v3.14.1" },
+        { "stylua", version = "v2.5.2" },
+        { "tree-sitter-cli", version = "v0.27.0" },
+        { "vtsls", version = "0.3.0" },
+        { "vue-language-server", version = "3.3.11" },
       },
     },
-    config = function(_, opts)
-      require("mason").setup(opts)
-      local Package = require("mason-core.package")
-      local registry = require("mason-registry")
-      registry.refresh(function()
-        for _, spec in ipairs(opts.ensure_installed) do
-          local name, version = Package.Parse(spec)
-          local ok, p = pcall(registry.get_package, name)
-          if ok and not p:is_installed() then
-            p:install({ version = version })
-          end
-        end
-      end)
-    end,
+  },
+
+  {
+    "mason-org/mason-lspconfig.nvim",
+    lazy = true,
+    dependencies = { "mason-org/mason.nvim" },
   },
 
   {
@@ -169,7 +158,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
-    dependencies = { "mason-org/mason.nvim", "b0o/SchemaStore.nvim" },
+    dependencies = { "mason-org/mason.nvim", "mason-org/mason-lspconfig.nvim", "b0o/SchemaStore.nvim" },
     config = setup,
   },
 }

@@ -1,5 +1,3 @@
-local schemes = { dark = "catppuccin-mocha", light = "catppuccin-latte" }
-
 local themed_terminals = { lazygit = true }
 
 local function drop_stale_terminals()
@@ -22,48 +20,21 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   end,
 })
 
-local function apply(appearance)
-  local scheme = schemes[appearance]
-  if scheme and vim.g.colors_name ~= scheme then
-    vim.cmd.colorscheme(scheme)
-  end
-end
-
 return {
   {
     "catppuccin/nvim",
     name = "catppuccin",
     lazy = false,
     priority = 1100,
-    opts = {
-      integrations = {
-        blink_cmp = false,
-        lsp_trouble = false,
-        mason = true,
-        mini = true,
-        snacks = true,
-        treesitter = true,
-        which_key = false,
-      },
-    },
-    config = function(_, opts)
-      require("catppuccin").setup(opts)
-      apply("dark")
+    config = function()
+      require("catppuccin").setup()
+      vim.cmd.colorscheme("catppuccin")
     end,
   },
 
   {
     "f-person/auto-dark-mode.nvim",
     lazy = false,
-    opts = {
-      update_interval = 15000,
-      fallback = "dark",
-      set_dark_mode = function()
-        apply("dark")
-      end,
-      set_light_mode = function()
-        apply("light")
-      end,
-    },
+    opts = { update_interval = 15000 },
   },
 }

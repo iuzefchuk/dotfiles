@@ -12,6 +12,6 @@ vim.pack.add({
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 }, { confirm = false })
 
-for _, module in ipairs({ "colorscheme", "snacks", "editing", "format", "lsp", "treesitter", "ui" }) do
+for _, module in ipairs({ "colorscheme", "snacks", "editing", "format", "lsp", "treesitter" }) do
   require("plugins." .. module)
 end

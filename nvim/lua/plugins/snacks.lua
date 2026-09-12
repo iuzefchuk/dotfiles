@@ -110,6 +110,8 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 vim.schedule(plain_directories)
 
+require("mini.icons").setup()
+
 require("snacks").setup({
   bigfile = { enabled = true },
   quickfile = { enabled = true },

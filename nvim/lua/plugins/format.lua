@@ -39,16 +39,11 @@ local function eslint_fix_then_format(buf)
   return { timeout_ms = 3000 }
 end
 
-return {
-  "stevearc/conform.nvim",
-  event = "BufWritePre",
-  cmd = "ConformInfo",
-  opts = {
-    default_format_opts = { lsp_format = "fallback" },
-    format_on_save = eslint_fix_then_format,
-    formatters_by_ft = formatters_by_ft(),
-    formatters = {
-      prettier = { prepend_args = prettier_parser },
-    },
+require("conform").setup({
+  default_format_opts = { lsp_format = "fallback" },
+  format_on_save = eslint_fix_then_format,
+  formatters_by_ft = formatters_by_ft(),
+  formatters = {
+    prettier = { prepend_args = prettier_parser },
   },
-}
+})

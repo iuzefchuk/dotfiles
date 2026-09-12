@@ -1,6 +1,5 @@
-vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
-
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 vim.g.markdown_recommended_style = 0
 
 local opt = vim.opt
@@ -38,19 +37,14 @@ opt.mouse = "a"
 opt.number = true
 opt.pumblend = 10
 opt.pumheight = 10
-opt.relativenumber = false
-opt.ruler = false
 opt.scrolloff = 4
 opt.shiftround = true
 opt.shiftwidth = 2
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
-opt.showmode = false
 opt.sidescrolloff = 8
 opt.signcolumn = "yes"
 opt.smartcase = true
-opt.smartindent = false
 opt.smoothscroll = true
-opt.spelllang = { "en" }
 opt.splitbelow = true
 opt.splitkeep = "screen"
 opt.splitright = true
@@ -63,4 +57,3 @@ opt.updatetime = 200
 opt.virtualedit = "block"
 opt.wildmode = "longest:full,full"
 opt.winminwidth = 5
-opt.wrap = true

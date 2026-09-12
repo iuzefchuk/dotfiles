@@ -20,21 +20,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   end,
 })
 
-return {
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    lazy = false,
-    priority = 1100,
-    config = function()
-      require("catppuccin").setup()
-      vim.cmd.colorscheme("catppuccin")
-    end,
-  },
+require("catppuccin").setup()
+vim.cmd.colorscheme("catppuccin")
 
-  {
-    "f-person/auto-dark-mode.nvim",
-    lazy = false,
-    opts = { update_interval = 15000 },
-  },
-}
+require("auto-dark-mode").setup({ update_interval = 15000 })

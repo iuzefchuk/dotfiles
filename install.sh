@@ -19,6 +19,9 @@ link() {
   echo "link $dest -> $src"
 }
 
+brew bundle --no-upgrade --file="$root/Brewfile"
+npm install -g @vtsls/language-server @vue/language-server vscode-langservers-extracted
+
 link "$root/nvim" "$HOME/.config/nvim"
 link "$root/lazygit/config.yml" "$support/lazygit/config.yml"
 

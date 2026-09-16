@@ -29,36 +29,17 @@ local vue_plugin = {
 }
 
 vim.diagnostic.config({
-  underline = true,
-  update_in_insert = false,
   severity_sort = true,
   virtual_text = {
     spacing = 4,
     source = "if_many",
     prefix = "●",
   },
-  signs = {
-    text = {
-      [vim.diagnostic.severity.ERROR] = " ",
-      [vim.diagnostic.severity.WARN] = " ",
-      [vim.diagnostic.severity.HINT] = " ",
-      [vim.diagnostic.severity.INFO] = " ",
-    },
-  },
 })
 
 vim.lsp.config("vtsls", {
-  filetypes = {
-    "javascript",
-    "javascriptreact",
-    "javascript.jsx",
-    "typescript",
-    "typescriptreact",
-    "typescript.tsx",
-    "vue",
-  },
+  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" },
   settings = {
-    complete_function_calls = true,
     vtsls = {
       autoUseWorkspaceTsdk = true,
       experimental = { maxInlayHintLength = 30 },
@@ -73,16 +54,7 @@ vim.lsp.config("jsonls", {
   settings = {
     json = {
       schemas = require("schemastore").json.schemas(),
-      format = { enable = true },
-      validate = { enable = true },
     },
-  },
-})
-
-vim.lsp.config("eslint", {
-  settings = {
-    workingDirectories = { mode = "auto" },
-    format = false,
   },
 })
 
@@ -96,14 +68,9 @@ vim.lsp.config("lua_ls", {
 
 vim.lsp.enable({ "vtsls", "vue_ls", "eslint", "jsonls", "lua_ls" })
 
-local group = vim.api.nvim_create_augroup("config_lsp", { clear = true })
-
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = group,
   callback = function(event)
-    if vim.bo[event.buf].filetype ~= "vue" then
-      vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
-    end
+    if vim.bo[event.buf].filetype ~= "vue" then vim.lsp.inlay_hint.enable(true, { bufnr = event.buf }) end
 
     local client = vim.lsp.get_client_by_id(event.data.client_id)
     if client and client:supports_method("textDocument/completion") then
@@ -112,7 +79,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-vim.api.nvim_create_autocmd("LspDetach", { group = group, callback = reset_stranded_diagnostics })
+vim.api.nvim_create_autocmd("LspDetach", { callback = reset_stranded_diagnostics })
 
 require("lazydev").setup({
   library = {

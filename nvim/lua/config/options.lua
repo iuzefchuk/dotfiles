@@ -2,6 +2,17 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.markdown_recommended_style = 0
 
+local statusline = table.concat({
+  " %<%f",
+  "%{% &modified ? '%#DiagnosticWarn# ●%*' : '' %}",
+  " %h%w%r",
+  "%=",
+  "%{% &busy > 0 ? '◐ ' : '' %}",
+  "%{% v:lua.vim.ui.progress_status() %}",
+  "%{% v:lua.vim.diagnostic.status() %}",
+  "  %l:%c  %P ",
+})
+
 local opt = vim.opt
 
 opt.autowrite = true
@@ -48,6 +59,7 @@ opt.smoothscroll = true
 opt.splitbelow = true
 opt.splitkeep = "screen"
 opt.splitright = true
+opt.statusline = statusline
 opt.tabstop = 2
 opt.termguicolors = true
 opt.timeoutlen = 300

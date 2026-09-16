@@ -23,7 +23,7 @@ local function close_extra_windows()
     local buf = vim.api.nvim_win_get_buf(win)
     local floating = vim.api.nvim_win_get_config(win).relative ~= ""
     local ft = vim.bo[buf].filetype
-    local sidebar = ft ~= "snacks_dashboard" and ft:match("^snacks_")
+    local sidebar = ft:match("^snacks_")
     if not floating and not sidebar then
       if kept then
         pcall(vim.api.nvim_win_close, win, false)
@@ -46,6 +46,14 @@ local commands = {
           Snacks.explorer()
         end
       end)
+    end,
+  },
+  Diff = {
+    desc = "diff",
+    run = function()
+      if not pcall(require("mini.diff").toggle_overlay, 0) then
+        Snacks.notify.warn("No tracked changes in this buffer")
+      end
     end,
   },
   Explore = {

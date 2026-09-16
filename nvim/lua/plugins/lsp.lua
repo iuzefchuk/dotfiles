@@ -43,29 +43,13 @@ vim.lsp.config("vtsls", {
   },
 })
 
-vim.lsp.config("jsonls", { settings = { json = { schemas = require("schemastore").json.schemas() } } })
-
-local snacks_lua = vim.fn.stdpath("data") .. "/site/pack/core/opt/snacks.nvim/lua"
-vim.lsp.config("lua_ls", {
-  settings = {
-    Lua = {
-      runtime = { version = "LuaJIT" },
-      workspace = { library = { vim.env.VIMRUNTIME .. "/lua", "${3rd}/luv/library", snacks_lua } },
-      diagnostics = { disable = { "missing-fields" } },
-    },
-  },
-})
+vim.lsp.config("lua_ls", { settings = { Lua = { diagnostics = { globals = { "vim", "Snacks" } } } } })
 
 vim.lsp.enable({ "vtsls", "vue_ls", "eslint", "jsonls", "lua_ls" })
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(event)
     if vim.bo[event.buf].filetype ~= "vue" then vim.lsp.inlay_hint.enable(true, { bufnr = event.buf }) end
-
-    local client = vim.lsp.get_client_by_id(event.data.client_id)
-    if client and client:supports_method("textDocument/completion") then
-      vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
-    end
   end,
 })
 

@@ -31,7 +31,6 @@ opt.scrolloff = 4
 opt.shiftround = true
 opt.shiftwidth = 2
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
-opt.signcolumn = "yes"
 opt.smartcase = true
 opt.smoothscroll = true
 opt.splitbelow = true

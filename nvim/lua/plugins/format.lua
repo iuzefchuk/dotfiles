@@ -1,19 +1,10 @@
 local formatters_by_ft = { lua = { "stylua" }, sh = { "shfmt" } }
 for _, ft in ipairs({
   "css",
-  "graphql",
-  "handlebars",
   "html",
   "javascript",
-  "javascriptreact",
   "json",
-  "jsonc",
-  "less",
-  "markdown",
-  "markdown.mdx",
-  "scss",
   "typescript",
-  "typescriptreact",
   "vue",
   "yaml",
 }) do

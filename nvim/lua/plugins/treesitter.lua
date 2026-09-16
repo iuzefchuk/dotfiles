@@ -1,26 +1,12 @@
 require("nvim-treesitter").install({
   "bash",
   "css",
-  "diff",
   "html",
   "javascript",
-  "jsdoc",
   "json",
-  "json5",
   "lua",
-  "luadoc",
-  "markdown",
-  "markdown_inline",
-  "query",
-  "regex",
-  "scss",
-  "toml",
-  "tsx",
   "typescript",
-  "vim",
-  "vimdoc",
   "vue",
-  "yaml",
 })
 
 vim.api.nvim_create_autocmd("FileType", {

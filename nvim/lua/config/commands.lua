@@ -24,11 +24,6 @@ local commands = {
       if #Snacks.picker.get({ source = "explorer" }) == 0 then Snacks.explorer() end
     end)
   end,
-  Diff = function()
-    if not pcall(require("mini.diff").toggle_overlay, 0) then
-      Snacks.notify.warn("No tracked changes in this buffer")
-    end
-  end,
   Explore = function() Snacks.explorer() end,
   Git = function() Snacks.lazygit() end,
   Grep = function() Snacks.picker.grep() end,

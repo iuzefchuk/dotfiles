@@ -11,13 +11,7 @@ opt.completeopt = "menu,menuone,noselect,popup,fuzzy"
 opt.confirm = true
 opt.cursorline = true
 opt.expandtab = true
-opt.fillchars = {
-  foldopen = "",
-  foldclose = "",
-  fold = " ",
-  diff = "╱",
-  eob = " ",
-}
+opt.fillchars = { foldopen = "", foldclose = "", fold = " ", diff = "╱", eob = " " }
 opt.foldlevel = 99
 opt.foldmethod = "indent"
 opt.foldtext = ""
@@ -37,7 +31,6 @@ opt.scrolloff = 4
 opt.shiftround = true
 opt.shiftwidth = 2
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
-opt.sidescrolloff = 8
 opt.signcolumn = "yes"
 opt.smartcase = true
 opt.smoothscroll = true

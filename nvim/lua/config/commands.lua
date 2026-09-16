@@ -1,5 +1,3 @@
-local function explorer_open() return #Snacks.picker.get({ source = "explorer" }) > 0 end
-
 local function close_extra_windows()
   local kept
   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -18,44 +16,27 @@ local function close_extra_windows()
 end
 
 local commands = {
-  Clear = {
-    desc = "reset",
-    run = function()
-      vim.cmd("silent! tabonly")
-      close_extra_windows()
-      Snacks.bufdelete.all()
-      vim.schedule(function()
-        if not explorer_open() then Snacks.explorer() end
-      end)
-    end,
-  },
-  Diff = {
-    desc = "diff",
-    run = function()
-      if not pcall(require("mini.diff").toggle_overlay, 0) then
-        Snacks.notify.warn("No tracked changes in this buffer")
-      end
-    end,
-  },
-  Explore = {
-    desc = "explorer",
-    run = function() Snacks.explorer() end,
-  },
-  Git = {
-    desc = "git",
-    run = function() Snacks.lazygit() end,
-  },
-  Grep = {
-    desc = "search",
-    run = function() Snacks.picker.grep() end,
-  },
+  Clear = function()
+    vim.cmd("silent! tabonly")
+    close_extra_windows()
+    Snacks.bufdelete.all()
+    vim.schedule(function()
+      if #Snacks.picker.get({ source = "explorer" }) == 0 then Snacks.explorer() end
+    end)
+  end,
+  Diff = function()
+    if not pcall(require("mini.diff").toggle_overlay, 0) then
+      Snacks.notify.warn("No tracked changes in this buffer")
+    end
+  end,
+  Explore = function() Snacks.explorer() end,
+  Git = function() Snacks.lazygit() end,
+  Grep = function() Snacks.picker.grep() end,
 }
 
-local function clear_cmdline() vim.api.nvim_echo({}, false, {}) end
-
-for name, command in pairs(commands) do
+for name, run in pairs(commands) do
   vim.api.nvim_create_user_command(name, function()
-    command.run()
-    vim.schedule(clear_cmdline)
-  end, { desc = command.desc, range = true })
+    run()
+    vim.schedule(function() vim.api.nvim_echo({}, false, {}) end)
+  end, { range = true })
 end

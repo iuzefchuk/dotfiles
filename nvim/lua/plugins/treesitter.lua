@@ -1,4 +1,4 @@
-local ensure_installed = {
+require("nvim-treesitter").install({
   "bash",
   "css",
   "diff",
@@ -21,9 +21,7 @@ local ensure_installed = {
   "vimdoc",
   "vue",
   "yaml",
-}
-
-require("nvim-treesitter").install(ensure_installed)
+})
 
 vim.api.nvim_create_autocmd("FileType", {
   callback = function(event)

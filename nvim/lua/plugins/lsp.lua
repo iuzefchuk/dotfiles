@@ -28,14 +28,7 @@ local vue_plugin = {
   enableForWorkspaceTypeScriptVersions = true,
 }
 
-vim.diagnostic.config({
-  severity_sort = true,
-  virtual_text = {
-    spacing = 4,
-    source = "if_many",
-    prefix = "●",
-  },
-})
+vim.diagnostic.config({ severity_sort = true, virtual_text = { spacing = 4, source = "if_many", prefix = "●" } })
 
 vim.lsp.config("vtsls", {
   filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" },
@@ -50,21 +43,9 @@ vim.lsp.config("vtsls", {
   },
 })
 
-vim.lsp.config("jsonls", {
-  settings = {
-    json = {
-      schemas = require("schemastore").json.schemas(),
-    },
-  },
-})
+vim.lsp.config("jsonls", { settings = { json = { schemas = require("schemastore").json.schemas() } } })
 
-vim.lsp.config("lua_ls", {
-  settings = {
-    Lua = {
-      diagnostics = { disable = { "missing-fields" } },
-    },
-  },
-})
+vim.lsp.config("lua_ls", { settings = { Lua = { diagnostics = { disable = { "missing-fields" } } } } })
 
 vim.lsp.enable({ "vtsls", "vue_ls", "eslint", "jsonls", "lua_ls" })
 
@@ -82,8 +63,5 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.api.nvim_create_autocmd("LspDetach", { callback = reset_stranded_diagnostics })
 
 require("lazydev").setup({
-  library = {
-    { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-    { path = "snacks.nvim", words = { "Snacks" } },
-  },
+  library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } }, { path = "snacks.nvim", words = { "Snacks" } } },
 })

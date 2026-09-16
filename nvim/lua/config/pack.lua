@@ -6,7 +6,6 @@ vim.pack.add({
   "https://github.com/nvim-mini/mini.icons",
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/b0o/SchemaStore.nvim",
-  "https://github.com/folke/lazydev.nvim",
   "https://github.com/neovim/nvim-lspconfig",
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 }, { confirm = false })

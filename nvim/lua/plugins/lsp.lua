@@ -45,7 +45,16 @@ vim.lsp.config("vtsls", {
 
 vim.lsp.config("jsonls", { settings = { json = { schemas = require("schemastore").json.schemas() } } })
 
-vim.lsp.config("lua_ls", { settings = { Lua = { diagnostics = { disable = { "missing-fields" } } } } })
+local snacks_lua = vim.fn.stdpath("data") .. "/site/pack/core/opt/snacks.nvim/lua"
+vim.lsp.config("lua_ls", {
+  settings = {
+    Lua = {
+      runtime = { version = "LuaJIT" },
+      workspace = { library = { vim.env.VIMRUNTIME .. "/lua", "${3rd}/luv/library", snacks_lua } },
+      diagnostics = { disable = { "missing-fields" } },
+    },
+  },
+})
 
 vim.lsp.enable({ "vtsls", "vue_ls", "eslint", "jsonls", "lua_ls" })
 
@@ -61,7 +70,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 vim.api.nvim_create_autocmd("LspDetach", { callback = reset_stranded_diagnostics })
-
-require("lazydev").setup({
-  library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } }, { path = "snacks.nvim", words = { "Snacks" } } },
-})

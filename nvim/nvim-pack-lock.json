@@ -1,9 +1,5 @@
 {
   "plugins": {
-    "auto-dark-mode.nvim": {
-      "rev": "2b16a24c202892e61fca7df4d2d7c4c872a44165",
-      "src": "https://github.com/f-person/auto-dark-mode.nvim"
-    },
     "catppuccin": {
       "rev": "edefef779ab08ce1a4a404713e3012b0d202bd35",
       "src": "https://github.com/catppuccin/nvim"

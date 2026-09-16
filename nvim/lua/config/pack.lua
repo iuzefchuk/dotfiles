@@ -1,6 +1,5 @@
 vim.pack.add({
   { src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
-  "https://github.com/f-person/auto-dark-mode.nvim",
   "https://github.com/folke/snacks.nvim",
   "https://github.com/nvim-mini/mini.diff",
   "https://github.com/nvim-mini/mini.icons",
